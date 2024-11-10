@@ -81,7 +81,10 @@ func createServerTree(configFiles ...string) (*tv.TreeView, error) {
 		// run command
 		app.Suspend(func() {
 			// at this time, the terminal is used by this function
-			sshShell(entry)
+			err := sshShell2(entry)
+			if err != nil {
+				fmt.Println(err)
+			}
 		})
 	})
 

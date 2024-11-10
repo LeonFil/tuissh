@@ -4,10 +4,25 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/exec"
 
 	"golang.org/x/crypto/ssh"
 )
 
+// run ssh command
+func sshShell2(entry *SSHEntry) error {
+	cmd := exec.Command("ssh", entry.displayName)
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	if err := cmd.Run(); err != nil {
+		return err
+	}
+	return nil
+}
+
+// todo: fix issues when running tui like vim
 func sshShell(entry *SSHEntry) {
 	privateKey, err := os.ReadFile(entry.keyFile)
 	if err != nil {
@@ -47,6 +62,7 @@ func sshShell(entry *SSHEntry) {
 	// connect session's stdin/stdout/stderr
 	session.Stdin = os.Stdin
 	session.Stdout = os.Stdout
+	session.Stderr = os.Stderr
 
 	modes := ssh.TerminalModes{
 		ssh.ECHO:          0,

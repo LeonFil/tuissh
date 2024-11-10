@@ -34,7 +34,8 @@ func runTmux() {
 	}
 
 	if err := os.WriteFile(tmuxConfigFile, []byte(tmuxConfig), 0600); err != nil {
-		log.Fatalf("failed to create tmux file:%s", err)
+		log.Printf("failed to create tmux file:%s", err)
+		return
 	}
 
 	cmd := exec.Command("tmux", "-S", tmuxSocket, "-f", tmuxConfigFile, "attach-session")
@@ -43,9 +44,9 @@ func runTmux() {
 	cmd.Stderr = os.Stderr
 
 	if err := cmd.Start(); err != nil {
-		log.Fatalf("run tmux failed: %s", err)
+		log.Printf("run tmux failed: %s", err)
 	}
 	if err := cmd.Wait(); err != nil {
-		log.Fatalf("finished with error: %s", err)
+		log.Printf("finished with error: %s", err)
 	}
 }

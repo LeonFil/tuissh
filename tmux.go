@@ -48,9 +48,11 @@ func runTmux() {
 
 	if err := cmd.Start(); err != nil {
 		log.Printf("run tmux failed: %s", err)
+		return
 	}
 	if err := cmd.Wait(); err != nil {
 		log.Printf("finished with error: %s", err)
+		return
 	}
 	fmt.Printf("tmux started.")
 	os.Exit(0)

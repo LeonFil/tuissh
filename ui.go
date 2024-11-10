@@ -68,7 +68,9 @@ func createServerTree(configFiles ...string) (*tv.TreeView, error) {
 	})
 
 	serverTree.SetSelectedFunc(func(node *tv.TreeNode) {
+		// for non-leaf node
 		if len(node.GetChildren()) != 0 {
+			node.SetExpanded(!node.IsExpanded())
 			return
 		}
 		// for leaf node

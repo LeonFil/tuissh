@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bufio"
 	"errors"
 	"fmt"
+	"os"
 	"slices"
 	"strings"
 	"time"
@@ -86,6 +88,8 @@ func createServerTree(configFiles ...string) (*tv.TreeView, error) {
 			err := sshShell2(entry)
 			if err != nil {
 				fmt.Println(err)
+				fmt.Print("Press 'Enter' to continue...")
+				bufio.NewReader(os.Stdin).ReadBytes('\n')
 			}
 		})
 	})

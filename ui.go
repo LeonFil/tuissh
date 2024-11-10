@@ -85,11 +85,15 @@ func createServerTree(configFiles ...string) (*tv.TreeView, error) {
 		// run command
 		app.Suspend(func() {
 			// at this time, the terminal is used by this function
-			err := sshShell2(entry)
-			if err != nil {
-				fmt.Println(err)
-				fmt.Print("Press 'Enter' to continue...")
-				bufio.NewReader(os.Stdin).ReadBytes('\n')
+			if isTmuxRunning() {
+				sshShellTmux(entry)
+			} else {
+				err := sshShell2(entry)
+				if err != nil {
+					fmt.Println(err)
+					fmt.Print("Press 'Enter' to continue...")
+					bufio.NewReader(os.Stdin).ReadBytes('\n')
+				}
 			}
 		})
 	})

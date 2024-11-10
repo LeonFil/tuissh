@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"os"
 	"os/signal"
 
@@ -14,6 +15,17 @@ var errView *tv.TextView
 var screen tcell.Screen
 
 func main() {
+	selfPath, err := os.Executable()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if err := os.Setenv("TUISSH_PATH", selfPath); err != nil {
+		log.Fatal(err)
+	}
+
+	runTmux()
+
 	signal.Ignore(os.Interrupt)
 
 	homeDir, err := os.UserHomeDir()

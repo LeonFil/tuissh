@@ -9,6 +9,22 @@ import (
 	"golang.org/x/crypto/ssh"
 )
 
+// run ssh in tmux
+func sshShellTmux(entry *SSHEntry) error {
+	cmd := exec.Command("tmux", "new-window",
+		"-n", fmt.Sprintf("%s", entry.displayName),
+		fmt.Sprintf("ssh %s", entry.displayName))
+
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	if err := cmd.Run(); err != nil {
+		return err
+	}
+	return nil
+}
+
 // run ssh command
 func sshShell2(entry *SSHEntry) error {
 	cmd := exec.Command("ssh", entry.displayName)
@@ -86,6 +102,6 @@ func sshShell(entry *SSHEntry) {
 	}
 
 	if err := session.Wait(); err != nil {
-		log.Printf("Session failed:", err)
+		log.Printf("Session failed: %s", err)
 	}
 }

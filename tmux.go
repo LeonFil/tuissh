@@ -2,6 +2,7 @@ package main
 
 import (
 	_ "embed"
+	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -28,11 +29,13 @@ func runTmux() {
 	tmuxSocket = homeDir + "/tuissh.sock"
 	tmuxConfigFile = homeDir + "/tuissh.tmux"
 
+	// is this is run by tmux
 	if isTmuxRunning() {
 		log.Printf("tmux is already running...")
 		return
 	}
 
+	// start tmux and exit tuissh itself
 	if err := os.WriteFile(tmuxConfigFile, []byte(tmuxConfig), 0600); err != nil {
 		log.Printf("failed to create tmux file:%s", err)
 		return
@@ -49,4 +52,6 @@ func runTmux() {
 	if err := cmd.Wait(); err != nil {
 		log.Printf("finished with error: %s", err)
 	}
+	fmt.Printf("tmux started.")
+	os.Exit(0)
 }

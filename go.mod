@@ -1,6 +1,6 @@
 module github.com/linuxexam/tuissh
 
-go 1.23.1
+go 1.23.3
 
 require (
 	github.com/gdamore/tcell/v2 v2.7.4

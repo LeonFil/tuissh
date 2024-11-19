@@ -12,8 +12,8 @@ import (
 // run ssh in tmux
 func sshShellTmux(entry *SSHEntry) error {
 	cmd := exec.Command("tmux", "new-window",
-		"-n", fmt.Sprintf("%s", entry.displayName),
-		fmt.Sprintf("ssh %s", entry.displayName))
+		"-n", entry.displayName,
+		fmt.Sprintf("TERM=screen ssh %s", entry.displayName))
 
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
@@ -25,7 +25,7 @@ func sshShellTmux(entry *SSHEntry) error {
 	return nil
 }
 
-// run ssh command
+// run external ssh command
 func sshShell2(entry *SSHEntry) error {
 	cmd := exec.Command("ssh", entry.displayName)
 	cmd.Stdin = os.Stdin
@@ -39,17 +39,17 @@ func sshShell2(entry *SSHEntry) error {
 }
 
 // todo: fix issues when running tui like vim
-func sshShell(entry *SSHEntry) {
+func sshShell(entry *SSHEntry) error {
 	privateKey, err := os.ReadFile(entry.keyFile)
 	if err != nil {
 		log.Printf("failed to read key: %s", err)
-		return
+		return err
 	}
 
 	signer, err := ssh.ParsePrivateKey(privateKey)
 	if err != nil {
 		log.Printf("failed to parse private key: %s", err)
-		return
+		return err
 	}
 
 	config := &ssh.ClientConfig{
@@ -64,14 +64,14 @@ func sshShell(entry *SSHEntry) {
 	client, err := ssh.Dial("tcp", address, config)
 	if err != nil {
 		log.Printf("failed to dial: %s", err)
-		return
+		return err
 	}
 	defer client.Close()
 
 	session, err := client.NewSession()
 	if err != nil {
 		log.Printf("failed to create session: %s", err)
-		return
+		return err
 	}
 	defer session.Close()
 
@@ -94,14 +94,17 @@ func sshShell(entry *SSHEntry) {
 	}
 	if err := session.RequestPty(term, h, w, modes); err != nil {
 		log.Printf("failed to request pty: %s", err)
-		return
+		return err
 	}
 
 	if err := session.Shell(); err != nil {
 		log.Printf("failed to start shell: %s", err)
+		return err
 	}
 
 	if err := session.Wait(); err != nil {
 		log.Printf("Session failed: %s", err)
+		return err
 	}
+	return nil
 }

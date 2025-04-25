@@ -1,4 +1,4 @@
-module github.com/linuxexam/tuissh
+module github.com/LeonFil/tuissh
 
 go 1.23
 
